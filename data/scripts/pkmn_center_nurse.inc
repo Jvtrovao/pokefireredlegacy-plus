@@ -26,7 +26,7 @@ EventScript_PkmnCenterNurse_HealPkmn::
 	end
 
 EventScript_PkmnCenterNurse_TakeAndHealPkmn::
-	applymovement VAR_LAST_TALKED, Common_Movement_WalkInPlaceFasterLeft
+	applymovement VAR_LAST_TALKED, Movement_PkmnCenterNurse_Turn
 	waitmovement 0
 	dofieldeffect FLDEFF_POKECENTER_HEAL
 	callnative CableClub_OnResumeFunc
@@ -70,6 +70,10 @@ EventScript_PkmnCenterNurse_Goodbye::
 	msgbox Text_WeHopeToSeeYouAgain
 	goto EventScript_PkmnCenterNurse_PlayerTurn
 	return
+
+Movement_PkmnCenterNurse_Turn:
+	walk_in_place_faster_left
+	step_end
 
 Movement_Bow::
 	nurse_joy_bow

@@ -193,7 +193,9 @@
 #define OBJ_EVENT_GFX_VENUSAUR 188
 #define OBJ_EVENT_GFX_SUDOWOODO 189
 #define OBJ_EVENT_GFX_HEX_MANIAC 190
-#define NUM_OBJ_EVENT_GFX 191
+#define OBJ_EVENT_GFX_POKE_BALL OBJ_EVENT_GFX_ITEM_BALL // replaces ITEM_BALL
+#define OBJ_EVENT_GFX_OW_MON 191
+#define NUM_OBJ_EVENT_GFX 192
 
 // These are dynamic object gfx ids.
 // They correspond with the values of the VAR_OBJ_GFX_ID_X vars.
@@ -216,10 +218,36 @@
 #define OBJ_EVENT_GFX_VAR_E  (OBJ_EVENT_GFX_VARS + 0xE)
 #define OBJ_EVENT_GFX_VAR_F  (OBJ_EVENT_GFX_VARS + 0xF)
 
+#define OBJ_EVENT_GFX_MON_BASE  	0x200 // 512
+#define OBJ_EVENT_GFX_SPECIES_BITS  11
+#define OBJ_EVENT_GFX_SPECIES_MASK  ((1 << OBJ_EVENT_GFX_SPECIES_BITS) - 1)
+
+#define OW_SPECIES(x) 	(((x)->graphicsId & OBJ_EVENT_GFX_SPECIES_MASK) - OBJ_EVENT_GFX_MON_BASE)
+#define OW_FORM(x)    	((x)->graphicsId >> OBJ_EVENT_GFX_SPECIES_BITS)
+
+// If true, follower pokemon will bob up and down
+// during their idle & walking animations
+#define OW_MON_BOBBING  TRUE
+
+// If true, adds a small amount of overhead
+// to OW code so that large (48x48, 64x64) OWs
+// will display correctly under bridges, etc.
+#define LARGE_OW_SUPPORT TRUE
+
+// See global.h for the toggle of OW_GFX_COMPRESS
+// Compressed gfx are incompatible with non-power-of-two sprite sizes:
+// (You should not use 48x48 sprites/tables for compressed gfx)
+// 16x32, 32x32, 64x64 etc are fine
+
+// Followers will emerge from the pokeball they are stored in,
+// instead of a normal pokeball
+#define OW_MON_POKEBALLS TRUE
+
 #define SHADOW_SIZE_S   0
 #define SHADOW_SIZE_M   1
 #define SHADOW_SIZE_L   2
-#define SHADOW_SIZE_XL  3
+#define SHADOW_SIZE_XL  3 // unused; repurposed to mean no shadow
+#define SHADOW_SIZE_NONE 3
 
 #define F_INANIMATE                        (1 << 6)
 #define F_DISABLE_REFLECTION_PALETTE_LOAD  (1 << 7)
@@ -227,6 +255,9 @@
 #define TRACKS_NONE       0
 #define TRACKS_FOOT       1
 #define TRACKS_BIKE_TIRE  2
+#define TRACKS_SLITHER    3
+#define TRACKS_SPOT       4
+#define TRACKS_BUG        5
 
 #define OBJ_KIND_NORMAL 0
 #define OBJ_KIND_CLONE  255
@@ -234,6 +265,7 @@
 // Special object event local ids
 #define OBJ_EVENT_ID_PLAYER  0xFF
 #define OBJ_EVENT_ID_CAMERA  0x7F
+#define OBJ_EVENT_ID_FOLLOWER 0xFE
 
 // Object event local ids referenced in C files
 #define LOCALID_UNION_ROOM_PLAYER_4 2

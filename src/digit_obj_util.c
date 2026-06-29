@@ -2,6 +2,7 @@
 #include "gflib.h"
 #include "decompress.h"
 #include "digit_obj_util.h"
+#include "sprite.h"
 
 struct DigitPrinterAlloc
 {
@@ -40,29 +41,6 @@ static u8 GetTilesPerImage(u32 shape, u32 size);
 
 // ewram
 static EWRAM_DATA struct DigitPrinterAlloc *sOamWork = {0};
-
-// const rom data
-static const u8 sTilesPerImage[4][4] =
-{
-    [ST_OAM_SQUARE]      = {
-        [ST_OAM_SIZE_0] = 0x01, // SPRITE_SIZE_8x8
-        [ST_OAM_SIZE_1] = 0x04, // SPRITE_SIZE_16x16
-        [ST_OAM_SIZE_2] = 0x10, // SPRITE_SIZE_32x32
-        [ST_OAM_SIZE_3] = 0x40  // SPRITE_SIZE_64x64
-    },
-    [ST_OAM_H_RECTANGLE] = {
-        [ST_OAM_SIZE_0] = 0x02, // SPRITE_SIZE_16x8
-        [ST_OAM_SIZE_1] = 0x04, // SPRITE_SIZE_32x8
-        [ST_OAM_SIZE_2] = 0x08, // SPRITE_SIZE_32x16
-        [ST_OAM_SIZE_3] = 0x20  // SPRITE_SIZE_64x32
-    },
-    [ST_OAM_V_RECTANGLE] = {
-        [ST_OAM_SIZE_0] = 0x02, // SPRITE_SIZE_8x16
-        [ST_OAM_SIZE_1] = 0x04, // SPRITE_SIZE_8x32
-        [ST_OAM_SIZE_2] = 0x08, // SPRITE_SIZE_16x32
-        [ST_OAM_SIZE_3] = 0x20  // SPRITE_SIZE_32x64
-    }
-};
 
 const u16 gMinigameDigits_Pal[] = INCBIN_U16("graphics/misc/minigame_digits.gbapal");
 const u32 gMinigameDigits_Gfx[] = INCBIN_U32("graphics/misc/minigame_digits.4bpp.lz");
@@ -447,5 +425,5 @@ static bool32 SharesPalWithAnyActive(u32 id)
 
 static u8 GetTilesPerImage(u32 shape, u32 size)
 {
-    return sTilesPerImage[shape][size];
+    return 1 << GetSpanPerImage(shape, size);
 }

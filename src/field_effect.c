@@ -24,6 +24,7 @@
 #include "trainer_pokemon_sprites.h"
 #include "trig.h"
 #include "util.h"
+#include "constants/event_objects.h"
 #include "constants/event_object_movement.h"
 #include "constants/metatile_behaviors.h"
 #include "constants/songs.h"
@@ -485,7 +486,7 @@ static void FieldEffectScript_CallNative(const u8 **script, u32 *result)
     *script += sizeof(u32);
 }
 
-static void FieldEffectFreeGraphicsResources(struct Sprite *sprite)
+void FieldEffectFreeGraphicsResources(struct Sprite *sprite)
 {
     u16 tileStart = sprite->sheetTileStart;
     u8 paletteNum = sprite->oam.paletteNum;
@@ -628,12 +629,14 @@ static u8 CreateMonSprite_FieldMove(u16 species, u32 otId, u32 personality, s16 
 
 void FreeResourcesAndDestroySprite(struct Sprite *sprite, u8 spriteId)
 {
+	u8 paletteNum = sprite->oam.paletteNum;
     ResetPreservedPalettesInWeather();
     if (sprite->oam.affineMode != ST_OAM_AFFINE_OFF)
     {
         FreeOamMatrix(sprite->oam.matrixNum);
     }
-    FreeAndDestroyMonPicSprite(spriteId);
+    FreeAndDestroyMonPicSpriteNoPalette(spriteId);
+    FieldEffectFreePaletteIfUnused(paletteNum); // Clear palette only if unused, in case follower is using it
 }
 
 // r, g, b are between 0 and 16
@@ -1057,7 +1060,6 @@ static void SpriteCB_HallOfFameMonitor(struct Sprite *sprite)
         FieldEffectFreeGraphicsResources(sprite);
 }
 
-static void FieldCallback_UseFly(void);
 static void Task_UseFly(u8 taskId);
 static void FieldCallback_FlyIntoMap(void);
 static void Task_FlyIntoMap(u8 taskId);
@@ -1065,10 +1067,10 @@ static void Task_FlyIntoMap(u8 taskId);
 void ReturnToFieldFromFlyMapSelect(void)
 {
     SetMainCallback2(CB2_ReturnToField);
-    gFieldCallback = FieldCallback_UseFly;
+    gFieldCallback = FieldCallback_Fly;
 }
 
-static void FieldCallback_UseFly(void)
+void FieldCallback_Fly(void)
 {
     FadeInFromBlack();
     CreateTask(Task_UseFly, 0);
@@ -1320,6 +1322,14 @@ static bool8 (*const sEscalatorWarpFieldEffectFuncs[])(struct Task *task) = {
     EscalatorWarpEffect_6
 };
 
+static void HideFollowerForFieldEffect(void) {
+    struct ObjectEvent *followerObj = GetFollowerObject();
+    if (!followerObj || followerObj->invisible)
+        return;
+    ClearObjectEventMovement(followerObj, &gSprites[followerObj->spriteId]);
+    ObjectEventSetHeldMovement(followerObj, MOVEMENT_ACTION_ENTER_POKEBALL);
+}
+
 void StartEscalatorWarp(u8 metatileBehavior, u8 priority)
 {
     u8 taskId = CreateTask(Task_EscalatorWarpFieldEffect, priority);
@@ -1341,6 +1351,7 @@ static bool8 EscalatorWarpEffect_1(struct Task *task)
     CameraObjectReset2();
     StartEscalator(task->data[1]);
     QuestLog_OnEscalatorWarp(QL_ESCALATOR_OUT);
+	HideFollowerForFieldEffect(); // Hide follower before warping
     task->data[0]++;
     return FALSE;
 }
@@ -2087,6 +2098,7 @@ void StartEscapeRopeFieldEffect(void)
 {
     LockPlayerFieldControls();
     FreezeObjectEvents();
+	HideFollowerForFieldEffect(); // hide follower before warping
     CreateTask(Task_EscapeRopeWarpOut, 80);
 }
 
@@ -2998,6 +3010,8 @@ static void UseSurfEffect_1(struct Task *task)
 {
     LockPlayerFieldControls();
     FreezeObjectEvents();
+    // Put follower into pokeball before using Surf
+    HideFollowerForFieldEffect();
     gPlayerAvatar.preventStep = TRUE;
     SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_SURFING);
     PlayerGetDestCoords(&task->data[1], &task->data[2]);
@@ -3048,13 +3062,15 @@ static void UseSurfEffect_4(struct Task *task)
 
 static void UseSurfEffect_5(struct Task *task)
 {
-    struct ObjectEvent * objectEvent;
-    objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *followerObject = GetFollowerObject();
     if (ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
         gPlayerAvatar.preventStep = FALSE;
         gPlayerAvatar.flags &= ~PLAYER_AVATAR_FLAG_CONTROLLABLE;
         ObjectEventSetHeldMovement(objectEvent, GetFaceDirectionMovementAction(objectEvent->movementDirection));
+        if (followerObject)
+            ObjectEventClearHeldMovementIfFinished(followerObject);
         SetSurfBlob_BobState(objectEvent->fieldEffectSpriteId, BOB_PLAYER_AND_MON);
         UnfreezeObjectEvents();
         UnlockPlayerFieldControls();
@@ -3143,10 +3159,10 @@ u8 FldEff_NpcFlyOut(void)
     u8 spriteId = CreateSprite(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_BIRD], 0x78, 0, 1);
     struct Sprite *sprite = &gSprites[spriteId];
 
-    sprite->oam.paletteNum = 0;
     sprite->oam.priority = 1;
     sprite->callback = SpriteCB_NPCFlyOut;
     sprite->data[1] = gFieldEffectArguments[0];
+	sprite->oam.paletteNum = LoadObjectEventPalette(gSaveBlock2Ptr->playerGender ? FLDEFF_PAL_TAG_GREEN : FLDEFF_PAL_TAG_RED);
     PlaySE(SE_M_FLY);
     return spriteId;
 }

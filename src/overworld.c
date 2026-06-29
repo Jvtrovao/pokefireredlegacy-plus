@@ -37,6 +37,7 @@
 #include "random.h"
 #include "renewable_hidden_items.h"
 #include "roamer.h"
+#include "rtc.h"
 #include "safari_zone.h"
 #include "save_location.h"
 #include "scanline_effect.h"
@@ -410,18 +411,18 @@ static void LoadObjEventTemplatesFromHeader(void)
         if (gMapHeader.events->objectEvents[i].kind == OBJ_KIND_CLONE)
         {
             // load target object from the connecting map
-            u8 localId = gMapHeader.events->objectEvents[i].objUnion.clone.targetLocalId;
-            u8 mapNum = gMapHeader.events->objectEvents[i].objUnion.clone.targetMapNum;
-            u8 mapGroup = gMapHeader.events->objectEvents[i].objUnion.clone.targetMapGroup;
+            u8 localId = gMapHeader.events->objectEvents[i].targetLocalId;
+            u8 mapNum = gMapHeader.events->objectEvents[i].targetMapNum;
+            u8 mapGroup = gMapHeader.events->objectEvents[i].targetMapGroup;
             const struct MapHeader * connectionMap = Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum);
 
             gSaveBlock1Ptr->objectEventTemplates[j] = connectionMap->events->objectEvents[localId - 1];
             gSaveBlock1Ptr->objectEventTemplates[j].localId = gMapHeader.events->objectEvents[i].localId;
             gSaveBlock1Ptr->objectEventTemplates[j].x = gMapHeader.events->objectEvents[i].x;
             gSaveBlock1Ptr->objectEventTemplates[j].y = gMapHeader.events->objectEvents[i].y;
-            gSaveBlock1Ptr->objectEventTemplates[j].objUnion.clone.targetLocalId = localId;
-            gSaveBlock1Ptr->objectEventTemplates[j].objUnion.clone.targetMapNum = mapNum;
-            gSaveBlock1Ptr->objectEventTemplates[j].objUnion.clone.targetMapGroup = mapGroup;
+            gSaveBlock1Ptr->objectEventTemplates[j].targetLocalId = localId;
+            gSaveBlock1Ptr->objectEventTemplates[j].targetMapNum = mapNum;
+            gSaveBlock1Ptr->objectEventTemplates[j].targetMapGroup = mapGroup;
             gSaveBlock1Ptr->objectEventTemplates[j].kind = OBJ_KIND_CLONE;
             j++;
         }
@@ -470,7 +471,7 @@ void SetObjEventTemplateMovementType(u8 localId, u8 movementType)
         struct ObjectEventTemplate *objectEventTemplate = &savObjTemplates[i];
         if (objectEventTemplate->localId == localId)
         {
-            objectEventTemplate->objUnion.normal.movementType = movementType;
+            objectEventTemplate->movementType = movementType;
             return;
         }
     }
@@ -1491,8 +1492,10 @@ static void CB2_Overworld(void)
     if (fading)
         SetVBlankCallback(NULL);
     OverworldBasic();
-    if (fading)
+    if (fading) {
         SetFieldVBlankCallback();
+		return;
+    }
 }
 
 void SetMainCallback1(MainCallback cb)
@@ -1943,6 +1946,10 @@ static bool32 ReturnToFieldLocal(u8 *state)
         QuestLog_InitPalettesBackup();
         ResumeMap(FALSE);
         ReloadObjectsAndRunReturnToFieldMapScript();
+		if (gFieldCallback == FieldCallback_Fly)
+            RemoveFollowingPokemon();
+        else
+            UpdateFollowingPokemon();
         SetCameraToTrackPlayer();
         (*state)++;
         break;
@@ -2110,10 +2117,7 @@ static void ResumeMap(bool32 inLink)
     ResetAllPicSprites();
     ResetCameraUpdateInfo();
     InstallCameraPanAheadCallback();
-    if (!inLink)
-        InitObjectEventPalettes(0);
-    else
-        InitObjectEventPalettes(1);
+	FreeAllSpritePalettes();
 
     FieldEffectActiveListClear();
     StartWeather();
@@ -2146,6 +2150,7 @@ static void InitObjectEventsLocal(void)
     SetPlayerAvatarTransitionFlags(player->transitionFlags);
     ResetInitialPlayerAvatarState();
     TrySpawnObjectEvents(0, 0);
+	UpdateFollowingPokemon();
     TryRunOnWarpIntoMapScript();
 }
 
@@ -3309,7 +3314,7 @@ static void InitLinkPlayerObjectEventPos(struct ObjectEvent *objEvent, s16 x, s1
     objEvent->previousCoords.y = y;
     SetSpritePosToMapCoords(x, y, &objEvent->initialCoords.x, &objEvent->initialCoords.y);
     objEvent->initialCoords.x += 8;
-    ObjectEventUpdateElevation(objEvent);
+    ObjectEventUpdateElevation(objEvent, NULL);
 }
 
 static void SetLinkPlayerObjectRange(u8 linkPlayerId, u8 dir)
@@ -3448,7 +3453,7 @@ static bool8 FacingHandler_DpadMovement(struct LinkPlayerObjectEvent *linkPlayer
     {
         objEvent->directionSequenceIndex = 16;
         ShiftObjectEventCoords(objEvent, x, y);
-        ObjectEventUpdateElevation(objEvent);
+        ObjectEventUpdateElevation(objEvent, NULL);
         return TRUE;
     }
 }

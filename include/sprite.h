@@ -27,7 +27,7 @@ struct CompressedSpriteSheet
 struct SpriteFrameImage
 {
     const void *data;
-    u16 size;
+    u16 size;   
 };
 
 #define obj_frame_tiles(ptr) {.data = (u8 *)ptr, .size = sizeof ptr}
@@ -216,22 +216,26 @@ struct Sprite
     // general purpose data fields
     /*0x2E*/ s16 data[8];
 
-    /*0x3E*/ u16 inUse:1;               //1
-             u16 coordOffsetEnabled:1;  //2
-             u16 invisible:1;           //4
-             u16 flags_3:1;             //8
-             u16 flags_4:1;             //0x10
-             u16 flags_5:1;             //0x20
-             u16 flags_6:1;             //0x40
-             u16 flags_7:1;             //0x80
-    /*0x3F*/ u16 hFlip:1;               //1
-             u16 vFlip:1;               //2
-             u16 animBeginning:1;       //4
-             u16 affineAnimBeginning:1; //8
-             u16 animEnded:1;           //0x10
-             u16 affineAnimEnded:1;     //0x20
-             u16 usingSheet:1;          //0x40
-             u16 anchored:1;            //0x80
+    /*0x3E*/ u16 inUse:1;                   //1
+             u16 coordOffsetEnabled:1;      //2
+             u16 invisible:1;               //4
+             u16 flags_3:1;                 //8
+             // if nonzero, tile offset for usingSheet sprites
+             // is (offset + 1) << sheetSpan;
+             // (This allows using frame-based anim tables for sheet sprites)
+             u16 sheetSpan:3;
+             //  u16 flags_4:1;             //0x10
+             //  u16 flags_5:1;             //0x20
+             //  u16 flags_6:1;             //0x40
+             u16 flags_7:1;                 //0x80
+    /*0x3F*/ u16 hFlip:1;                   //1
+             u16 vFlip:1;                   //2
+             u16 animBeginning:1;           //4
+             u16 affineAnimBeginning:1;     //8
+             u16 animEnded:1;               //0x10
+             u16 affineAnimEnded:1;         //0x20
+             u16 usingSheet:1;              //0x40
+             u16 anchored:1;                //0x80
 
     /*0x40*/ u16 sheetTileStart;
 
@@ -293,7 +297,9 @@ void FreeOamMatrix(u8 matrixNum);
 void InitSpriteAffineAnim(struct Sprite *sprite);
 void SetOamMatrixRotationScaling(u8 matrixNum, s16 xScale, s16 yScale, u16 rotation);
 u16 LoadSpriteSheet(const struct SpriteSheet *sheet);
+u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template, u32 frame, s32 offset);
 void LoadSpriteSheets(const struct SpriteSheet *sheets);
+s16 AllocSpriteTiles(u16 tileCount);
 u16 AllocTilesForSpriteSheet(struct SpriteSheet *sheet);
 void AllocTilesForSpriteSheets(struct SpriteSheet *sheets);
 void FreeSpriteTilesByTag(u16 tag);
@@ -320,5 +326,6 @@ void ResetAffineAnimData(void);
 void FreeSpriteTilesIfNotUsingSheet(struct Sprite *sprite);
 s16 AllocSpriteTiles(u16 tileCount);
 void SetSpriteMatrixAnchor(struct Sprite* sprite, s16 xmod, s16 ymod);
+u32 GetSpanPerImage(u32 shape, u32 size);
 
 #endif //GUARD_SPRITE_H
