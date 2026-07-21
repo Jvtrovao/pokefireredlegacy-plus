@@ -5,6 +5,7 @@
 #include "field_message_box.h"
 #include "script.h"
 #include "event_data.h"
+#include "event_object_movement.h"
 #include "fldeff.h"
 #include "party_menu.h"
 #include "field_poison.h"
@@ -84,7 +85,10 @@ static void Task_TryFieldPoisonWhiteOut(u8 taskId)
         if (AllMonsFainted())
             gSpecialVar_Result = TRUE;
         else
+        {
             gSpecialVar_Result = FALSE;
+            UpdateFollowingPokemon();
+        }
         ScriptContext_Enable();
         DestroyTask(taskId);
         break;

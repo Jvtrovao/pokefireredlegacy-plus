@@ -239,6 +239,8 @@ struct ObjectEvent
              /*25*/ u32 disableJumpLandingGroundEffect:1;
              /*26*/ u32 fixedPriority:1;
              /*27*/ u32 hideReflection:1;
+			 /*28*/ u32 shiny:1; // OW mon shininess
+             /*   */ u32 padding:3;
     /*0x04*/        u16 graphicsId;
     /*0x06*/        u8 movementType;
     /*0x07*/        u8 trainerType;
@@ -278,7 +280,7 @@ struct ObjectEventGraphicsInfo
     /*0x0C*/ u8 paletteSlot:4;
              u8 shadowSize:2;
              u8 inanimate:1;
-             u8 disableReflectionPaletteLoad:1;
+             u8 compressed:1;
     /*0x0D*/ u8 tracks;
     /*0x10*/ const struct OamData *oam;
     /*0x14*/ const struct SubspriteTable *subspriteTables;
@@ -306,6 +308,11 @@ enum {
 #define PLAYER_AVATAR_FLAG_CONTROLLABLE (1 << PLAYER_AVATAR_STATE_CONTROLLABLE)
 #define PLAYER_AVATAR_FLAG_FORCED       (1 << PLAYER_AVATAR_STATE_FORCED)
 #define PLAYER_AVATAR_FLAG_DASH         (1 << PLAYER_AVATAR_STATE_DASH)
+
+#define PLAYER_AVATAR_FLAG_BIKE        (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE)
+// Player avatar flags for which follower pokemon are hidden
+#define FOLLOWER_INVISIBLE_FLAGS       (PLAYER_AVATAR_FLAG_SURFING | PLAYER_AVATAR_FLAG_UNDERWATER | \
+                                        PLAYER_AVATAR_FLAG_BIKE | PLAYER_AVATAR_FLAG_FORCED)
 
 enum {
     PLAYER_AVATAR_GFX_NORMAL,
