@@ -1828,15 +1828,25 @@ static u8 TrySetupObjectEventSprite(const struct ObjectEventTemplate *objectEven
     objectEvent = &gObjectEvents[objectEventId];
     graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
 
+    // isDynamicPalette = (spriteTemplate->paletteTag == OBJ_EVENT_PAL_TAG_DYNAMIC);
+    // if (!isDynamicPalette)
+    // {
+    //     LoadObjectEventPalette(spriteTemplate->paletteTag);
+
+    //     if (graphicsInfo->paletteSlot == PALSLOT_PLAYER)
+    //         LoadPlayerObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+    //     else if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
+    //         LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+    // }
     isDynamicPalette = (spriteTemplate->paletteTag == OBJ_EVENT_PAL_TAG_DYNAMIC);
     if (!isDynamicPalette)
     {
-        LoadObjectEventPalette(spriteTemplate->paletteTag);
-
         if (graphicsInfo->paletteSlot == PALSLOT_PLAYER)
             LoadPlayerObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
         else if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
             LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+        else
+            LoadObjectEventPalette(spriteTemplate->paletteTag);
     }
 
     if (objectEvent->movementType == MOVEMENT_TYPE_INVISIBLE)
@@ -1865,6 +1875,8 @@ static u8 TrySetupObjectEventSprite(const struct ObjectEventTemplate *objectEven
     sprite = &gSprites[spriteId];
     if (isDynamicPalette)
         sprite->oam.paletteNum = LoadDynamicFollowerPalette(OW_SPECIES(objectEvent), OW_FORM(objectEvent), objectEvent->shiny);
+    else if (graphicsInfo->paletteSlot == PALSLOT_PLAYER || graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
+        sprite->oam.paletteNum = graphicsInfo->paletteSlot;
     // else
     //     sprite->oam.paletteNum = graphicsInfo->paletteSlot;
 
@@ -2082,6 +2094,10 @@ u8 CreateVirtualObject(u16 graphicsId, u8 virtualObjId, s16 x, s16 y, u8 elevati
     x += MAP_OFFSET;
     y += MAP_OFFSET;
     SetSpritePosToOffsetMapCoords(&x, &y, 8, 16);
+    
+    if (graphicsInfo->paletteSlot != PALSLOT_PLAYER && graphicsInfo->paletteSlot != PALSLOT_NPC_SPECIAL)
+        LoadObjectEventPalette(spriteTemplate.paletteTag);
+    
     spriteId = CreateSpriteAtEnd(&spriteTemplate, x, y, 0);
     if (spriteId != MAX_SPRITES)
     {
@@ -2093,8 +2109,13 @@ u8 CreateVirtualObject(u16 graphicsId, u8 virtualObjId, s16 x, s16 y, u8 elevati
         sprite->coordOffsetEnabled = TRUE;
         sprite->sVirtualObjId = virtualObjId;
         sprite->sVirtualObjElev = elevation;
-        if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
+        if (graphicsInfo->paletteSlot == PALSLOT_PLAYER)
+            LoadPlayerObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+        else if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
             LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+
+        if (graphicsInfo->paletteSlot == PALSLOT_PLAYER || graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
+            sprite->oam.paletteNum = graphicsInfo->paletteSlot;
 
         if (subspriteTables != NULL)
         {
@@ -2186,6 +2207,7 @@ static u8 LoadDynamicFollowerPalette(u16 species, u8 form, bool32 shiny) {
     }
 
     paletteNum = LoadSpritePalette(&spritePalette);
+    ApplyGlobalFieldPaletteTint(paletteNum);
     if (gWeatherPtr->currWeather != WEATHER_FOG_HORIZONTAL) // don't want to weather blend in fog
         UpdateSpritePaletteWithWeather(paletteNum);
     return paletteNum;
@@ -2646,7 +2668,7 @@ u8 CreateFameCheckerObject(u16 graphicsId, u8 localId, s16 x, s16 y)
 
     graphicsInfo = GetObjectEventGraphicsInfo(graphicsId);
     CopyObjectGraphicsInfoToSpriteTemplate(graphicsId, SpriteCallbackDummy, &spriteTemplate, &subspriteTables);
-    if (spriteTemplate.paletteTag != TAG_NONE)
+    if (spriteTemplate.paletteTag != TAG_NONE && graphicsInfo->paletteSlot != PALSLOT_NPC_SPECIAL)
       LoadObjectEventPalette(spriteTemplate.paletteTag);
     // *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
 
@@ -2659,8 +2681,10 @@ u8 CreateFameCheckerObject(u16 graphicsId, u8 localId, s16 x, s16 y)
         // sprite->oam.paletteNum = graphicsInfo->paletteSlot;
         sprite->data[0] = localId;
         if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
+        {
             LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
-
+            sprite->oam.paletteNum = graphicsInfo->paletteSlot;
+        }
         if (subspriteTables != NULL)
         {
             SetSubspriteTables(sprite, subspriteTables);
@@ -2801,6 +2825,8 @@ static void SpawnObjectEventOnReturnToField(u8 objectEventId, s16 x, s16 y)
         sprite = &gSprites[spriteId];
         if (isDynamicPalette)
             sprite->oam.paletteNum = LoadDynamicFollowerPalette(OW_SPECIES(objectEvent), OW_FORM(objectEvent), objectEvent->shiny);
+        else if (graphicsInfo->paletteSlot == PALSLOT_PLAYER || graphicsInfo->paletteSlot >= PALSLOT_NPC_SPECIAL)
+            sprite->oam.paletteNum = graphicsInfo->paletteSlot;
         // else
         //     sprite->oam.paletteNum = graphicsInfo->paletteSlot;
 
@@ -2809,7 +2835,10 @@ static void SpawnObjectEventOnReturnToField(u8 objectEventId, s16 x, s16 y)
             sprite->sheetSpan = GetSpanPerImage(sprite->oam.shape, sprite->oam.size);
         #endif
 
-        if (spriteTemplate.paletteTag != TAG_NONE && spriteTemplate.paletteTag != OBJ_EVENT_PAL_TAG_DYNAMIC)
+        if (spriteTemplate.paletteTag != TAG_NONE
+            && spriteTemplate.paletteTag != OBJ_EVENT_PAL_TAG_DYNAMIC
+            && graphicsInfo->paletteSlot != PALSLOT_PLAYER
+            && graphicsInfo->paletteSlot < PALSLOT_NPC_SPECIAL)
             LoadObjectEventPalette(spriteTemplate.paletteTag);
 
         GetMapCoordsFromSpritePos(x + objectEvent->currentCoords.x, y + objectEvent->currentCoords.y, &sprite->x, &sprite->y);

@@ -2152,6 +2152,7 @@ static void InitObjectEventsLocal(void)
     SetPlayerAvatarTransitionFlags(player->transitionFlags);
     ResetInitialPlayerAvatarState();
     TrySpawnObjectEvents(0, 0);
+    UpdateFollowingPokemon();
     TryRunOnWarpIntoMapScript();
 }
 
