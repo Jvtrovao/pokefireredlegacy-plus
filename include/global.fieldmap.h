@@ -289,6 +289,28 @@ struct ObjectEventGraphicsInfo
     /*0x20*/ const union AffineAnimCmd *const *affineAnims;
 };
 
+// struct ObjectEventGraphicsInfo
+// {
+//     /*0x00*/ u16 tileTag;
+//     /*0x02*/ u16 paletteTag;
+//     /*0x04*/ u16 reflectionPaletteTag;
+//     /*0x06*/ u16 size;
+//     /*0x08*/ s16 width;
+//     /*0x0A*/ s16 height;
+//     /*0x0C*/ u8 paletteSlot:4;
+//              u8 shadowSize:2;
+//              u8 inanimate:1;
+//              u8 compressed:1;
+//     /*0x0D*/ u8 disableReflectionPaletteLoad:1;
+//              u8 tracksPadding:7; // spare bits for future use
+//     /*0x0E*/ u8 tracks;
+//     /*0x11*/ const struct OamData *oam;
+//     /*0x15*/ const struct SubspriteTable *subspriteTables;
+//     /*0x19*/ const union AnimCmd *const *anims;
+//     /*0x1D*/ const struct SpriteFrameImage *images;
+//     /*0x21*/ const union AffineAnimCmd *const *affineAnims;
+// };
+
 enum {
     PLAYER_AVATAR_STATE_NORMAL,
     PLAYER_AVATAR_STATE_MACH_BIKE,

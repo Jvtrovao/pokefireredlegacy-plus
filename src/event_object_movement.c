@@ -1831,6 +1831,8 @@ static u8 TrySetupObjectEventSprite(const struct ObjectEventTemplate *objectEven
     isDynamicPalette = (spriteTemplate->paletteTag == OBJ_EVENT_PAL_TAG_DYNAMIC);
     if (!isDynamicPalette)
     {
+        LoadObjectEventPalette(spriteTemplate->paletteTag);
+
         if (graphicsInfo->paletteSlot == PALSLOT_PLAYER)
             LoadPlayerObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
         else if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
@@ -1850,8 +1852,8 @@ static u8 TrySetupObjectEventSprite(const struct ObjectEventTemplate *objectEven
         objectEvent->graphicsId -= SPECIES_SHINY_TAG;
     }
 
-    if (!isDynamicPalette)
-        *(u16 *)&spriteTemplate->paletteTag = TAG_NONE;
+    // if (!isDynamicPalette)
+    //     *(u16 *)&spriteTemplate->paletteTag = TAG_NONE;
 
     spriteId = CreateSprite(spriteTemplate, 0, 0, 0);
     if (spriteId == MAX_SPRITES)
@@ -1863,8 +1865,8 @@ static u8 TrySetupObjectEventSprite(const struct ObjectEventTemplate *objectEven
     sprite = &gSprites[spriteId];
     if (isDynamicPalette)
         sprite->oam.paletteNum = LoadDynamicFollowerPalette(OW_SPECIES(objectEvent), OW_FORM(objectEvent), objectEvent->shiny);
-    else
-        sprite->oam.paletteNum = graphicsInfo->paletteSlot;
+    // else
+    //     sprite->oam.paletteNum = graphicsInfo->paletteSlot;
 
     #if OW_GFX_COMPRESS
     if (sprite->usingSheet)
@@ -2076,7 +2078,7 @@ u8 CreateVirtualObject(u16 graphicsId, u8 virtualObjId, s16 x, s16 y, u8 elevati
 
     graphicsInfo = GetObjectEventGraphicsInfo(graphicsId);
     CopyObjectGraphicsInfoToSpriteTemplate(graphicsId, SpriteCB_VirtualObject, &spriteTemplate, &subspriteTables);
-    *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
+    // *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
     x += MAP_OFFSET;
     y += MAP_OFFSET;
     SetSpritePosToOffsetMapCoords(&x, &y, 8, 16);
@@ -2087,7 +2089,7 @@ u8 CreateVirtualObject(u16 graphicsId, u8 virtualObjId, s16 x, s16 y, u8 elevati
         sprite->centerToCornerVecX = -(graphicsInfo->width >> 1);
         sprite->centerToCornerVecY = -(graphicsInfo->height >> 1);
         sprite->y += sprite->centerToCornerVecY;
-        sprite->oam.paletteNum = graphicsInfo->paletteSlot;
+        // sprite->oam.paletteNum = graphicsInfo->paletteSlot;
         sprite->coordOffsetEnabled = TRUE;
         sprite->sVirtualObjId = virtualObjId;
         sprite->sVirtualObjElev = elevation;
@@ -2644,7 +2646,9 @@ u8 CreateFameCheckerObject(u16 graphicsId, u8 localId, s16 x, s16 y)
 
     graphicsInfo = GetObjectEventGraphicsInfo(graphicsId);
     CopyObjectGraphicsInfoToSpriteTemplate(graphicsId, SpriteCallbackDummy, &spriteTemplate, &subspriteTables);
-    *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
+    if (spriteTemplate.paletteTag != TAG_NONE)
+      LoadObjectEventPalette(spriteTemplate.paletteTag);
+    // *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
 
     spriteId = CreateSpriteAtEnd(&spriteTemplate, x, y, 0);
     if (spriteId != MAX_SPRITES)
@@ -2652,7 +2656,7 @@ u8 CreateFameCheckerObject(u16 graphicsId, u8 localId, s16 x, s16 y)
         sprite = &gSprites[spriteId];
         sprite->centerToCornerVecY = -(graphicsInfo->height >> 1);
         sprite->y += sprite->centerToCornerVecY;
-        sprite->oam.paletteNum = graphicsInfo->paletteSlot;
+        // sprite->oam.paletteNum = graphicsInfo->paletteSlot;
         sprite->data[0] = localId;
         if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
             LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
@@ -2781,14 +2785,14 @@ static void SpawnObjectEventOnReturnToField(u8 objectEventId, s16 x, s16 y)
     isDynamicPalette = (spriteTemplate.paletteTag == OBJ_EVENT_PAL_TAG_DYNAMIC);
     if (!isDynamicPalette)
     {
-        *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
+        // *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
         if (graphicsInfo->paletteSlot == PALSLOT_PLAYER)
             LoadPlayerObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
 
         if (graphicsInfo->paletteSlot >= PALSLOT_NPC_SPECIAL)
             LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
 
-        *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
+        // *(u16 *)&spriteTemplate.paletteTag = TAG_NONE;
     }
 
     spriteId = CreateSprite(&spriteTemplate, 0, 0, 0);
@@ -2797,13 +2801,16 @@ static void SpawnObjectEventOnReturnToField(u8 objectEventId, s16 x, s16 y)
         sprite = &gSprites[spriteId];
         if (isDynamicPalette)
             sprite->oam.paletteNum = LoadDynamicFollowerPalette(OW_SPECIES(objectEvent), OW_FORM(objectEvent), objectEvent->shiny);
-        else
-            sprite->oam.paletteNum = graphicsInfo->paletteSlot;
+        // else
+        //     sprite->oam.paletteNum = graphicsInfo->paletteSlot;
 
         #if OW_GFX_COMPRESS
         if (sprite->usingSheet)
             sprite->sheetSpan = GetSpanPerImage(sprite->oam.shape, sprite->oam.size);
         #endif
+
+        if (spriteTemplate.paletteTag != TAG_NONE && spriteTemplate.paletteTag != OBJ_EVENT_PAL_TAG_DYNAMIC)
+            LoadObjectEventPalette(spriteTemplate.paletteTag);
 
         GetMapCoordsFromSpritePos(x + objectEvent->currentCoords.x, y + objectEvent->currentCoords.y, &sprite->x, &sprite->y);
         sprite->centerToCornerVecX = -(graphicsInfo->width >> 1);
@@ -3101,6 +3108,7 @@ static u8 TryLoadObjectPalette(const struct SpritePalette *spritePalette)
     if (paletteNum != 0xFF) // don't load twice; return
         return paletteNum;
     paletteNum = LoadSpritePalette(spritePalette);
+    ApplyGlobalFieldPaletteTint(paletteNum);
     return paletteNum;
 }
 
