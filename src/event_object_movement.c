@@ -5625,7 +5625,7 @@ bool8 FollowablePlayerMovement_Step(struct ObjectEvent *objectEvent, struct Spri
         else
             ObjectEventSetSingleMovement(objectEvent, sprite, GetWalkSlowMovementAction(direction));
     } else if (PlayerGetCopyableMovement() == COPY_MOVE_JUMP2) {
-        ObjectEventSetSingleMovement(objectEvent, sprite, GetWalkSlowMovementAction(direction));
+        ObjectEventSetSingleMovement(objectEvent, sprite, GetWalkSlowerMovementAction(direction));
     } else if (gSprites[gPlayerAvatar.spriteId].data[4] == MOVE_SPEED_FAST_1) {
         objectEvent->movementActionId = GetWalkFastMovementAction(direction);
     } else {
@@ -10795,9 +10795,9 @@ u8 DoJumpSpriteMovement(struct Sprite *sprite)
         sprite->sTimer++;
     } else {
         sprite->y2 = GetJumpY(sprite->sTimer >> distanceToShift[sprite->sJumpDistance], sprite->sJumpType);
-        sprite->sTimer++;
+        
     }
-
+    sprite->sTimer++;
     if (sprite->sTimer == (distanceToTime[sprite->sJumpDistance] >> 1))
         jumpPhase = JUMP_HALFWAY;
 
