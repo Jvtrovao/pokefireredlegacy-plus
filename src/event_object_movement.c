@@ -2905,14 +2905,14 @@ static void ObjectEventSetGraphics(struct ObjectEvent *objectEvent, const struct
     u8 var3;
 
     if (graphicsInfo->paletteTag != OBJ_EVENT_PAL_TAG_DYNAMIC)
-    {
-        if (graphicsInfo->paletteSlot == PALSLOT_PLAYER)
-            PatchObjectPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
-        else if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
-            LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
-        else
-            LoadObjectEventPalette(graphicsInfo->paletteTag);
-    }
+{
+    if (graphicsInfo->paletteSlot == PALSLOT_PLAYER && objectEvent->localId == OBJ_EVENT_ID_PLAYER)
+        PatchObjectPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+    else if (graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL)
+        LoadSpecialObjectReflectionPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+    else
+        LoadObjectEventPalette(graphicsInfo->paletteTag);
+}
 
     var = sprite->images->size / TILE_SIZE_4BPP;
     if (!sprite->usingSheet)
@@ -2930,8 +2930,8 @@ static void ObjectEventSetGraphics(struct ObjectEvent *objectEvent, const struct
     sprite->anims = graphicsInfo->anims;
     sprite->subspriteTables = graphicsInfo->subspriteTables;
     if (graphicsInfo->paletteTag != OBJ_EVENT_PAL_TAG_DYNAMIC
-        && (graphicsInfo->paletteSlot == PALSLOT_PLAYER || graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL))
-        sprite->oam.paletteNum = graphicsInfo->paletteSlot;
+    && ((graphicsInfo->paletteSlot == PALSLOT_PLAYER && objectEvent->localId == OBJ_EVENT_ID_PLAYER) || graphicsInfo->paletteSlot == PALSLOT_NPC_SPECIAL))
+    sprite->oam.paletteNum = graphicsInfo->paletteSlot;
     if (!sprite->usingSheet)
     {
         s32 var2;

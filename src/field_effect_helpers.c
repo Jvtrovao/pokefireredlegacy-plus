@@ -143,6 +143,7 @@ static void LoadObjectRegularReflectionPalette(struct ObjectEvent *objectEvent, 
             else
                 ApplyIceFilter(mainSprite->oam.paletteNum, filteredData);
             paletteNum = LoadSpritePalette(&filteredPal);
+            ApplyGlobalFieldPaletteTint(paletteNum);
             UpdateSpritePaletteWithWeather(paletteNum);
         }
         sprite->oam.paletteNum = paletteNum;
