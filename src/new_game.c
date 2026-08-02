@@ -72,6 +72,7 @@ static void SetDefaultOptions(void)
     gSaveBlock2Ptr->optionsMoveEffectiveness = OPTIONS_MOVE_EFFECTIVENESS_BOTH;
     gSaveBlock2Ptr->optionsSurvivePoison = 1; // OFF
     gSaveBlock2Ptr->optionsFollowPokemon = 0; // ON
+    gSaveBlock2Ptr->optionsFieldMoveLearnset = 1; // OFF
 }
 
 static void ClearPokedexFlags(void)
