@@ -223,12 +223,15 @@ static const struct WindowTemplate sStandardBattleWindowTemplates[] = {
     },
     [B_WIN_PP_REMAINING] = {
         .bg = 0,
-        .tilemapLeft = 24,
+        .tilemapLeft = 21, // was 24
         .tilemapTop = 55,
-        .width = 5,
+        .width = 8, // was 5
         .height = 2,
         .paletteNum = 5,
-        .baseBlock = 0x2a6
+        .baseBlock = 0x2b0, // was 0x2a6
+                            // 0x2b0 is safe: it's the same block DUMMY/SWITCH_PROMPT already
+                            // share, and switch-prompt (32 tiles) is never shown at the
+                            // same time as the move-select PP/type box, so no real conflict.
     },
     [B_WIN_DUMMY] = {
         .bg = 0,
@@ -364,6 +367,15 @@ static const struct WindowTemplate sStandardBattleWindowTemplates[] = {
         .height = 4,
         .paletteNum = 7,
         .baseBlock = 0x090
+    },
+    [B_WIN_MOVE_DESCRIPTION] = {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 44,
+        .width = 18,
+        .height = 9,
+        .paletteNum = 5,
+        .baseBlock = 0x0350,
     },
     DUMMY_WIN_TEMPLATE
 };
@@ -698,6 +710,14 @@ void LoadBattleMenuWindowGfx(void)
     gPlttBufferUnfaded[BG_PLTT_ID(5) + 14] = RGB(31, 31, 31);
     gPlttBufferUnfaded[BG_PLTT_ID(5) + 15] = RGB( 26,  26,  25);
     CpuCopy16(&gPlttBufferUnfaded[BG_PLTT_ID(5) + 12], &gPlttBufferFaded[BG_PLTT_ID(5) + 12], PLTT_SIZEOF(4));
+	
+	// Add colors for type effectiveness indicators using positions 1-3
+    gPlttBufferUnfaded[BG_PLTT_ID(5) + 1] = RGB(24,  8,  8); // Red for not very effective
+    gPlttBufferUnfaded[BG_PLTT_ID(5) + 2] = RGB(31, 16, 16); // Light red
+    gPlttBufferUnfaded[BG_PLTT_ID(5) + 3] = RGB( 8, 24,  8); // Green for super effective
+    gPlttBufferUnfaded[BG_PLTT_ID(5) + 4] = RGB(16, 16, 16); // Gray for no effect
+
+    CpuCopy16(&gPlttBufferUnfaded[BG_PLTT_ID(5) + 1], &gPlttBufferFaded[BG_PLTT_ID(5) + 1], PLTT_SIZEOF(4));
 
     if (gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE))
     {

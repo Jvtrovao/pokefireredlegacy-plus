@@ -16,6 +16,8 @@ extern const struct CompressedSpritePalette gSpritePalette_Bag;
 extern const struct CompressedSpriteSheet gBagSwapSpriteSheet;
 extern const struct CompressedSpritePalette gBagSwapSpritePalette;
 
+extern const struct SpriteTemplate sSpriteTemplate_ItemIcon;
+
 void ResetItemMenuIconState(void);
 void CreateSwapLine(void);
 void DestroyItemMenuIcon(bool8 a0);
@@ -30,5 +32,7 @@ void SetBagVisualPocketId(u8);
 void ShakeBagSprite(void);
 const u32 *GetItemIconGfxPtr(u16 itemId, u8 ptrId);
 void CreateBagSprite(u8 animNum);
+
+void SetCursorWithinListBounds(u16 *scrollOffset, u16 *cursorPos, u8 maxShownItems, u8 totalItems);
 
 #endif // GUARD_ITEM_MENU_ICONS

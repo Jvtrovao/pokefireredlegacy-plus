@@ -29,6 +29,8 @@
 #include "berry_powder.h"
 #include "pokemon_jump.h"
 #include "event_scripts.h"
+//New Registered Items Menu
+#include "tx_registered_items_menu.h"
 
 // this file's functions
 static void ResetMiniGamesResults(void);
@@ -66,6 +68,11 @@ static void SetDefaultOptions(void)
     gSaveBlock2Ptr->optionsBattleSceneOff = FALSE;
     gSaveBlock2Ptr->regionMapZoom = FALSE;
     gSaveBlock2Ptr->optionsButtonMode = OPTIONS_BUTTON_MODE_HELP;
+    gSaveBlock2Ptr->optionsEnemySummary = 0; // ON
+    gSaveBlock2Ptr->optionsMoveEffectiveness = OPTIONS_MOVE_EFFECTIVENESS_BOTH;
+    gSaveBlock2Ptr->optionsSurvivePoison = 1; // OFF
+    gSaveBlock2Ptr->optionsFollowPokemon = 0; // ON
+    gSaveBlock2Ptr->optionsFieldMoveLearnset = 1; // OFF
 }
 
 static void ClearPokedexFlags(void)
@@ -135,8 +142,9 @@ void NewGameInitData(void)
     ZeroPlayerPartyMons();
     ResetPokemonStorageSystem();
     ClearRoamerData();
-    gSaveBlock1Ptr->registeredItem = 0;
+	gSaveBlock1Ptr->registeredItems[0].itemId = 0;   // New Registered Items Menu
     ClearBag();
+	TxRegItemsMenu_RegisteredItemsMenuNewGame();  // New Registered Items Menu
     NewGameInitPCItems();
     ClearEnigmaBerries();
     InitEasyChatPhrases();
@@ -149,6 +157,7 @@ void NewGameInitData(void)
     RunScriptImmediately(EventScript_ResetAllMapFlags);
     StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
     ResetTrainerTowerResults();
+    FlagSet(FLAG_ENABLE_SURFOVERWORLD); // ON by default
 }
 
 static void ResetMiniGamesResults(void)

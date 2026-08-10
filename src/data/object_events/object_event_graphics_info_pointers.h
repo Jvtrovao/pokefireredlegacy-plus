@@ -90,7 +90,6 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Mom;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Celio;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_TeachyTVHost;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_GymGuy;
-const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_ItemBall;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_TownMap;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Pokedex;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_CutTree;
@@ -150,6 +149,8 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_DeoxysD;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_DeoxysA;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_DeoxysN;
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_SSAnne;
+const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_PokeBall;
+const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Follower;
 
 
 const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM_OBJ_EVENT_GFX] = {
@@ -245,7 +246,6 @@ const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM
     [OBJ_EVENT_GFX_CELIO]                    = &gObjectEventGraphicsInfo_Celio,
     [OBJ_EVENT_GFX_TEACHY_TV_HOST]           = &gObjectEventGraphicsInfo_TeachyTVHost,
     [OBJ_EVENT_GFX_GYM_GUY]                  = &gObjectEventGraphicsInfo_GymGuy,
-    [OBJ_EVENT_GFX_ITEM_BALL]                = &gObjectEventGraphicsInfo_ItemBall,
     [OBJ_EVENT_GFX_TOWN_MAP]                 = &gObjectEventGraphicsInfo_TownMap,
     [OBJ_EVENT_GFX_POKEDEX]                  = &gObjectEventGraphicsInfo_Pokedex,
     [OBJ_EVENT_GFX_CUT_TREE]                 = &gObjectEventGraphicsInfo_CutTree,
@@ -305,4 +305,6 @@ const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM
     [OBJ_EVENT_GFX_DEOXYS_A]                 = &gObjectEventGraphicsInfo_DeoxysA,
     [OBJ_EVENT_GFX_DEOXYS_N]                 = &gObjectEventGraphicsInfo_DeoxysN,
     [OBJ_EVENT_GFX_SS_ANNE]                  = &gObjectEventGraphicsInfo_SSAnne,
+    [OBJ_EVENT_GFX_POKE_BALL]   			 = &gObjectEventGraphicsInfo_PokeBall,
+    [OBJ_EVENT_GFX_OW_MON] 					 = &gObjectEventGraphicsInfo_Follower,
 };

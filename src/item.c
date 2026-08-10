@@ -10,6 +10,8 @@
 #include "constants/hold_effects.h"
 #include "constants/items.h"
 #include "constants/maps.h"
+//New Registered Items Menu
+#include "tx_registered_items_menu.h"
 
 EWRAM_DATA struct BagPocket gBagPockets[NUM_BAG_POCKETS] = {};
 
@@ -457,15 +459,13 @@ void ItemPcCompaction(void)
 
 void RegisteredItemHandleBikeSwap(void)
 {
-    switch (gSaveBlock1Ptr->registeredItem)
-    {
-    case ITEM_MACH_BIKE:
-        gSaveBlock1Ptr->registeredItem = ITEM_ACRO_BIKE;
-        break;
-    case ITEM_ACRO_BIKE:
-        gSaveBlock1Ptr->registeredItem = ITEM_MACH_BIKE;
-        break;
-    }
+    u8 pos_ACRO = TxRegItemsMenu_GetRegisteredItemIndex(ITEM_ACRO_BIKE);
+    u8 pos_MACH = TxRegItemsMenu_GetRegisteredItemIndex(ITEM_MACH_BIKE);
+
+    if (pos_ACRO != 0xFF)
+        gSaveBlock1Ptr->registeredItems[pos_ACRO].itemId = ITEM_MACH_BIKE;
+    else if (pos_MACH != 0xFF)
+        gSaveBlock1Ptr->registeredItems[pos_MACH].itemId = ITEM_ACRO_BIKE;
 }
 
 void SwapItemSlots(struct ItemSlot * a, struct ItemSlot * b)

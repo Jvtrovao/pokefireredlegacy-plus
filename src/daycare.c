@@ -885,6 +885,28 @@ static u8 GetEggMoves(struct Pokemon *pokemon, u16 *eggMoves)
     return numEggMoves;
 }
 
+u8 GetEggMovesForSpecies(u16 species, u16 *eggMoves)
+{
+    u16 eggMoveIdx = 0;
+    u8 numEggMoves = 0;
+    u16 i;
+
+    species = GetEggSpecies(species);
+    for (i = 0; i < NELEMS(gEggMoves) - 1; i++)
+    {
+        if (gEggMoves[i] == species + EGG_MOVES_SPECIES_OFFSET)
+        {
+            eggMoveIdx = i + 1;
+            break;
+        }
+    }
+
+    for (i = eggMoveIdx; gEggMoves[i] <= EGG_MOVES_SPECIES_OFFSET && numEggMoves < 32; i++)
+        eggMoves[numEggMoves++] = gEggMoves[i];
+
+    return numEggMoves;
+}
+
 static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, struct BoxPokemon *mother)
 {
     u16 numSharedParentMoves;
@@ -1332,7 +1354,8 @@ static u8 GetDaycareCompatibilityScore(struct DayCare *daycare)
 
 static u8 GetDaycareCompatibilityScoreFromSave(void)
 {
-    return GetDaycareCompatibilityScore(&gSaveBlock1Ptr->daycare);
+    gSpecialVar_Result = GetDaycareCompatibilityScore(&gSaveBlock1Ptr->daycare);
+    return gSpecialVar_Result;
 }
 
 void SetDaycareCompatibilityString(void)

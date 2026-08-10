@@ -185,7 +185,7 @@ static const union AnimCmd *const sAnims_ItemIcon[] = {
     sAnim_ItemIcon
 };
 
-static const struct SpriteTemplate sSpriteTemplate_ItemIcon = {
+const struct SpriteTemplate sSpriteTemplate_ItemIcon = {
     .tileTag = TAG_ITEM_ICON,
     .paletteTag = TAG_ITEM_ICON,
     .oam = &sOamData_ItemIcon,
@@ -435,5 +435,19 @@ void CreateBerryPouchItemIcon(u16 itemId, u8 idx)
             gSprites[spriteId].x2 = 24;
             gSprites[spriteId].y2 = 147; // This value is the only difference from CreateItemMenuIcon
         }
+    }
+}
+
+void SetCursorWithinListBounds(u16 *scrollOffset, u16 *cursorPos, u8 maxShownItems, u8 totalItems)
+{
+    if (*scrollOffset != 0 && *scrollOffset + maxShownItems > totalItems)
+        *scrollOffset = totalItems - maxShownItems;
+
+    if (*scrollOffset + *cursorPos >= totalItems)
+    {
+        if (totalItems == 0)
+            *cursorPos = 0;
+        else
+            *cursorPos = totalItems - 1;
     }
 }
