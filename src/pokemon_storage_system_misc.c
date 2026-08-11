@@ -673,7 +673,7 @@ static const union AffineAnimCmd *const sAffineAnims_ItemIcon[] = {
     [ITEM_ANIM_LARGE]     = sAffineAnim_ItemIcon_Large,
 };
 
-static const struct SpriteTemplate sSpriteTemplate_ItemIcon = {
+static const struct SpriteTemplate sSpriteTemplate_StorageItemIcon = {
     .tileTag = GFXTAG_ITEM_ICON_0,
     .paletteTag = PALTAG_ITEM_ICON_0,
     .oam = &sOamData_ItemIcon,
@@ -695,7 +695,7 @@ void CreateItemIconSprites(void)
     {
         spriteSheet.data = sItemIconGfxBuffer;
         spriteSheet.size = 0x200;
-        spriteTemplate = sSpriteTemplate_ItemIcon;
+        spriteTemplate = sSpriteTemplate_StorageItemIcon;
 
         for (i = 0; i < MAX_ITEM_ICONS; i++)
         {

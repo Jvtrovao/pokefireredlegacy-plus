@@ -980,7 +980,6 @@ static const u8 sLevelNickTextColors[][3] =
     {0, 1, 10}, // 8 - Red (trainer-owned) — fg=238,49,0 red / shadow=pale cream (soft outline)
     {0, 5, 10}, // 9 - Green (wild, catchable) — fg=123,205,82 green / shadow=pale cream (soft outline)
 };
-};
 
 static const u8 ALIGNED(4) sMultiBattlePartyOrder[] =
 {
@@ -2703,46 +2702,29 @@ static void PrintNatureArrow(u8 x, u8 y, s8 natureStat)
 static void PrintSkillsPage(void)
 {
     const s8 *natureMod = gNatureStatTable[GetNature(&sMonSummaryScreen->currentMon)];
-    const u8 natureNeutralColor = 0;
-    const u8 natureUpColor = 6;
-    const u8 natureDownColor = 7;
 
-    u8 hpStat = 0;
     u8 atkStat = natureMod[STAT_ATK - 1];
     u8 defStat = natureMod[STAT_DEF - 1];
     u8 spAStat = natureMod[STAT_SPATK - 1];
     u8 spDStat = natureMod[STAT_SPDEF - 1];
     u8 speStat = natureMod[STAT_SPEED - 1];
 
-    u8 hpColor = GetColorIndexForStatNature(hpStat);
-    u8 atkColor = GetColorIndexForStatNature(atkStat);
-    u8 defColor = GetColorIndexForStatNature(defStat);
-    u8 spAColor = GetColorIndexForStatNature(spAStat);
-    u8 spDColor = GetColorIndexForStatNature(spDStat);
-    u8 speColor = GetColorIndexForStatNature(speStat);
-
-    if (sPSS_StatsDisplayMode != PSS_STATS_DISPLAY_NORMAL)
-    {
-        // Nature only colors the base stat display - IVs/EVs aren't affected by nature.
-        hpColor = atkColor = defColor = spAColor = spDColor = speColor = natureNeutralColor;
-    }
-
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 14 + sMonSkillsPrinterXpos->curHpStr, 4, sLevelNickTextColors[hpColor], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.curHpStrBuf);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 14 + sMonSkillsPrinterXpos->curHpStr, 4, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.curHpStrBuf);
 
     PrintNatureArrow(44, 22, sPSS_StatsDisplayMode == PSS_STATS_DISPLAY_NORMAL ? atkStat : 0);
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->atkStr, 22, sLevelNickTextColors[atkColor], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_ATK]);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->atkStr, 22, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_ATK]);
 
     PrintNatureArrow(44, 35, sPSS_StatsDisplayMode == PSS_STATS_DISPLAY_NORMAL ? defStat : 0);
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->defStr, 35, sLevelNickTextColors[defColor], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_DEF]);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->defStr, 35, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_DEF]);
 
     PrintNatureArrow(44, 48, sPSS_StatsDisplayMode == PSS_STATS_DISPLAY_NORMAL ? spAStat : 0);
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->spAStr, 48, sLevelNickTextColors[spAColor], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPA]);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->spAStr, 48, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPA]);
 
     PrintNatureArrow(44, 61, sPSS_StatsDisplayMode == PSS_STATS_DISPLAY_NORMAL ? spDStat : 0);
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->spDStr, 61, sLevelNickTextColors[spDColor], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPD]);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->spDStr, 61, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPD]);
 
     PrintNatureArrow(44, 74, sPSS_StatsDisplayMode == PSS_STATS_DISPLAY_NORMAL ? speStat : 0);
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->speStr, 74, sLevelNickTextColors[speColor], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPE]);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->speStr, 74, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPE]);
 
     AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 15 + sMonSkillsPrinterXpos->expStr, 87, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.expPointsStrBuf);
     AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 15 + sMonSkillsPrinterXpos->toNextLevel, 100, sLevelNickTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.expToNextLevelStrBuf);

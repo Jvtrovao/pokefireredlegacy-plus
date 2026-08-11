@@ -256,4 +256,7 @@ extern const u8 gText_Win[];
 extern const u8 gText_Loss[];
 extern const u8 gText_Draw[];
 
+extern const u8 gText_NewLine[];
+extern const u8 gText_NewLine2[];
+
 #endif // GUARD_BATTLE_MESSAGE_H

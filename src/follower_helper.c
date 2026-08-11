@@ -93,15 +93,15 @@ const struct FollowerMsgInfoExtended gFollowerConditionalMessages[COND_MSG_COUNT
     .emotion = FOLLOWER_EMOTION_HAPPY,
     .orFlag = 1, // match any of these maps
     .conditions = {
-        MATCH_MAP(SEVEN_ISLAND),
-        MATCH_MAP(SAFFRON_CITY),
-		MATCH_MAP(LAVENDER_TOWN)},
+        MATCH_MAP(MAP_SEVEN_ISLAND),
+        MATCH_MAP(MAP_SAFFRON_CITY),
+		MATCH_MAP(MAP_LAVENDER_TOWN)},
     },
     [COND_MSG_MT_EMBER] =
     {
     .text = sCondMsg07,
     .emotion = FOLLOWER_EMOTION_HAPPY,
-    .conditions = {MATCH_MAP(MT_EMBER_EXTERIOR)},
+    .conditions = {MATCH_MAP(MAP_MT_EMBER_EXTERIOR)},
     },
     [COND_MSG_DAY_CARE] =
     {
@@ -110,8 +110,8 @@ const struct FollowerMsgInfoExtended gFollowerConditionalMessages[COND_MSG_COUNT
     .emotion = FOLLOWER_EMOTION_NEUTRAL,
 	.orFlag = 1, // match any of these maps
     .conditions = {
-        MATCH_MAP(ROUTE5_POKEMON_DAY_CARE),
-        MATCH_MAP(FOUR_ISLAND_POKEMON_DAY_CARE)},
+        MATCH_MAP(MAP_ROUTE5_POKEMON_DAY_CARE),
+        MATCH_MAP(MAP_FOUR_ISLAND_POKEMON_DAY_CARE)},
     },
     [COND_MSG_MART] =
     {
@@ -131,7 +131,7 @@ const struct FollowerMsgInfoExtended gFollowerConditionalMessages[COND_MSG_COUNT
     {
     .text = sCondMsg12,
     .emotion = FOLLOWER_EMOTION_PENSIVE,
-    .conditions = {MATCH_MAP(CERULEAN_CITY_BIKE_SHOP)},
+    .conditions = {MATCH_MAP(MAP_CERULEAN_CITY_BIKE_SHOP)},
     },
     [COND_MSG_MACHINES] =
     {
@@ -139,7 +139,7 @@ const struct FollowerMsgInfoExtended gFollowerConditionalMessages[COND_MSG_COUNT
     .textSpread = 1,
     .emotion = FOLLOWER_EMOTION_MUSIC,
     .conditions = {
-        MATCH_MAP(ROUTE25_SEA_COTTAGE)}, //todo
+        MATCH_MAP(MAP_ROUTE25_SEA_COTTAGE)}, //todo
     },
     [COND_MSG_SAILING] =
     {
@@ -179,7 +179,7 @@ const struct FollowerMsgInfoExtended gFollowerConditionalMessages[COND_MSG_COUNT
     .text = (u8*)sElevatorTexts,
     .textSpread = 1,
     .emotion = FOLLOWER_EMOTION_SURPRISE,
-    .conditions = {MATCH_MAP(CELADON_CITY_DEPARTMENT_STORE_ELEVATOR)},
+    .conditions = {MATCH_MAP(MAP_CELADON_CITY_DEPARTMENT_STORE_ELEVATOR)},
     },
     [COND_MSG_ICE_ROOM] =
     {
@@ -188,17 +188,17 @@ const struct FollowerMsgInfoExtended gFollowerConditionalMessages[COND_MSG_COUNT
     .emotion = FOLLOWER_EMOTION_SURPRISE,
 	.orFlag = 1,
     .conditions = {
-		MATCH_MAP(SEAFOAM_ISLANDS_1F),
-		MATCH_MAP(SEAFOAM_ISLANDS_B1F),
-		MATCH_MAP(SEAFOAM_ISLANDS_B2F),
-		MATCH_MAP(SEAFOAM_ISLANDS_B3F),
-		MATCH_MAP(SEAFOAM_ISLANDS_B4F)}, //check later
+		MATCH_MAP(MAP_SEAFOAM_ISLANDS_1F),
+		MATCH_MAP(MAP_SEAFOAM_ISLANDS_B1F),
+		MATCH_MAP(MAP_SEAFOAM_ISLANDS_B2F),
+		MATCH_MAP(MAP_SEAFOAM_ISLANDS_B3F),
+		MATCH_MAP(MAP_SEAFOAM_ISLANDS_B4F)}, //check later
     },
     [COND_MSG_ROUTE_25] =
     {
     .text = sCondMsg27,
     .emotion = FOLLOWER_EMOTION_SURPRISE,
-    .conditions = {MATCH_MAP(ROUTE25)},  //todo
+    .conditions = {MATCH_MAP(MAP_ROUTE25)},  //todo
     },
     [COND_MSG_DRAGON_GROWL] =
     {
@@ -272,7 +272,7 @@ const struct FollowerMsgInfoExtended gFollowerConditionalMessages[COND_MSG_COUNT
     {
     .text = sCondMsg39,
     .emotion = FOLLOWER_EMOTION_PENSIVE,
-    .conditions = {MATCH_MAP(VIRIDIAN_FOREST)}, //check later
+    .conditions = {MATCH_MAP(MAP_VIRIDIAN_FOREST)}, //check later
     },
     [COND_MSG_ICE] =
     {

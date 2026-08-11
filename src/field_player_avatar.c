@@ -1277,7 +1277,7 @@ u16 GetPlayerAvatarGraphicsIdByCurrentState(void)
     return 0;
 }
 
-void SetPlayerAvatarExtraStateTransition(u8 graphicsId, u8 extras)
+void SetPlayerAvatarExtraStateTransition(u16 graphicsId, u8 extras)
 {
     u8 unk = GetPlayerAvatarStateTransitionByGraphicsId(graphicsId, gPlayerAvatar.gender);
 

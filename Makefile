@@ -292,6 +292,7 @@ $(C_BUILDDIR)/berry_crush_3.o: CFLAGS += -Wno-address-of-packed-member
 $(C_BUILDDIR)/braille_text.o: CFLAGS += -Wno-address-of-packed-member
 $(C_BUILDDIR)/text.o: CFLAGS += -Wno-address-of-packed-member
 $(C_BUILDDIR)/battle_tower.o: CFLAGS += -Wno-div-by-zero
+$(C_BUILDDIR)/pokemon.o: CFLAGS += -Wno-attribute-alias -Wno-stringop-overflow
 $(C_BUILDDIR)/librfu_intr.o: override CFLAGS += -marm -mthumb-interwork -O2 -mtune=arm7tdmi -march=armv4t -mabi=apcs-gnu -fno-toplevel-reorder -fno-aggressive-loop-optimizations -Wno-pointer-to-int-cast
 endif
 

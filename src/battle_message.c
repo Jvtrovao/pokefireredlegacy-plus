@@ -434,6 +434,9 @@ static const u8 sText_SpDef2[] = _("SP. DEF");
 static const u8 sText_Accuracy[] = _("accuracy");
 static const u8 sText_Evasiveness[] = _("evasiveness");
 
+const u8 gText_NewLine[] = _("\n");
+const u8 gText_NewLine2[] = _("-");
+
 const u8 *const gStatNamesTable[] = {
     sText_HP2,
     sText_Attack2,

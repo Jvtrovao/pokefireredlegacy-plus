@@ -280,6 +280,9 @@ enum
     HELP_USING_BAIT,
     HELP_USING_ROCK,
     HELP_USING_HALL_OF_FAME,
+    HELP_USING_ENEMY_SUMMARY,
+    HELP_USING_MOVE_EFFECTIVENESS,
+    HELP_USING_MOVE_DESCRIPTION,
 };
 
 static const u8 *const sHelpSystemMenuTopicTextPtrs[] = {

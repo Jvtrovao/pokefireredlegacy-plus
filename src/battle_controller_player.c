@@ -28,6 +28,7 @@
 #include "constants/hold_effects.h"
 #include "menu.h"
 #include "pokemon_summary_screen.h"
+#include "new_menu_helpers.h"
 
 static void PlayerHandleGetMonData(void);
 static void PlayerHandleSetMonData(void);
@@ -1680,6 +1681,63 @@ static void MoveSelectionDisplayMoveDescription(void)
      BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_DESCRIPTION);
      CopyWindowToVram(B_WIN_MOVE_DESCRIPTION, COPYWIN_FULL);
  }
+
+ static u32 GetTypeEffectivenessMultiplier(u8 atkType, u8 defType1, u8 defType2)
+{
+    s32 i = 0;
+    u32 multiplier = TYPE_MUL_NORMAL;
+
+    while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
+    {
+        if (TYPE_EFFECT_ATK_TYPE(i) == TYPE_FORESIGHT)
+        {
+            i += 3;
+            continue;
+        }
+        else if (TYPE_EFFECT_ATK_TYPE(i) == atkType)
+        {
+            // check type1
+            if (TYPE_EFFECT_DEF_TYPE(i) == defType1)
+                multiplier = (multiplier * TYPE_EFFECT_MULTIPLIER(i)) / 10;
+            // check type2
+            if (TYPE_EFFECT_DEF_TYPE(i) == defType2 && defType1 != defType2)
+                multiplier = (multiplier * TYPE_EFFECT_MULTIPLIER(i)) / 10;
+        }
+        i += 3;
+    }
+
+    return multiplier;
+}
+
+static u32 GetTargetTypeEffectiveness(u8 moveType)
+{
+    u8 opponentBattler = GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerPosition(gActiveBattler)));
+    u32 effectiveness = TYPE_MUL_NORMAL;
+    bool8 gotEffectiveness = FALSE;
+
+    if (gBattleMons[opponentBattler].hp != 0)
+    {
+        effectiveness = GetTypeEffectivenessMultiplier(moveType, gBattleMons[opponentBattler].type1, gBattleMons[opponentBattler].type2);
+        gotEffectiveness = TRUE;
+    }
+
+    // In doubles (not multi battle), also weigh in the second foe and show
+    // whichever result is more useful to know about.
+    if (IsDoubleBattle() && !(gBattleTypeFlags & BATTLE_TYPE_MULTI))
+    {
+        u8 partnerOpponentBattler = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(opponentBattler)));
+
+        if (partnerOpponentBattler != opponentBattler && gBattleMons[partnerOpponentBattler].hp != 0)
+        {
+            u32 partnerEffectiveness = GetTypeEffectivenessMultiplier(moveType, gBattleMons[partnerOpponentBattler].type1, gBattleMons[partnerOpponentBattler].type2);
+
+            if (!gotEffectiveness || partnerEffectiveness > effectiveness)
+                effectiveness = partnerEffectiveness;
+        }
+    }
+
+    return effectiveness;
+}
 
 static void MoveSelectionDisplayMoveType(void)
 {
